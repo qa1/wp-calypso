@@ -13,6 +13,8 @@ import StepHeader from 'signup/step-header';
 import Button from 'components/button';
 import { abtest } from 'lib/abtest';
 
+import BluehostLogo from './bluehost-logo';
+
 export default React.createClass( {
 	displayName: 'BluehostStoreStep',
 
@@ -30,18 +32,20 @@ export default React.createClass( {
 		return (
 			<div className="bluehost-store">
 				<StepHeader
-					headerText={ this.translate( 'Create your WordPress Store' ) }
+					headerText={ this.translate( 'Create a WordPress Store' ) }
 					subHeaderText={ this.translate( 'Our partners at BlueHost and WooCommerce are here for you' ) }
 				/>
 
 				<div className="bluehost-store__container">
 					<div className="bluehost-store__copy">
+						<BluehostLogo />
+
 						{ this.translate( 'We\'ve partnered with BlueHost, a top-notch WordPress hosts with a knack for building great e-commerce stores using WooCommerce.' ) }
 					</div>
 
 					<LoggedOutForm className="bluehost-store__form" onSubmit={ this.onSubmit }>
-						{ this.translate( 'Starting at' ) }
-						<span className="bluehost-store__price"> <b>$24.99</b>/mo </span>
+						<span className="bluehost-store__price-text"> { this.translate( 'Starting at' ) } </span>
+						<span className="bluehost-store__price"> <b>$12.95</b>/mo </span>
 						<FormButton className="bluehost-store__form-submit"> { this.translate( 'Create Store' ) } </FormButton>
 					</LoggedOutForm>
 				</div>

@@ -1,39 +1,73 @@
 .bluehost-store__container {
 	display: flex;
 	align-items: stretch;
-	max-width: 600px;
+	align-content: stretch;
+	max-width: 572px;
+	max-height: 172px;
 	margin: 0 auto;
-	border: 1px #becad3 solid;
+	border: 1px solid #c8d7e1;
+	flex-flow: row wrap;
+	width: auto;
 }
 
 .bluehost-store__copy {
-	padding: 20px;
-	font-size: 14px;
+	padding: 32px;
 	background-color: white;
+	font-size: 15px;
+	font-weight: 400;
+	line-height: 1.4;
+	color: #3d596d;
+	max-width: 402px;
+	box-sizing: border-box;
 }
 
 .bluehost-store__form {
+	flex-grow: 1;
+	min-width: 170px;
 	margin: 0;
-	padding: 20px;
+	padding: 32px 24px;
 	text-align: center;
 	background-color: #f3f6f8;
+	box-sizing: border-box;
+}
+
+.bluehost-store__price-text {
+	display: block;
+	height: 14px;
+	margin-bottom: 3px;
+	font-size: 12px;
+	font-weight: 400;
+	text-align: center;
+	color: #668eaa;
 }
 
 .bluehost-store__price {
-	font-size: 24px;
-	color: #48b769;
 	display: block;
+	height: 29px;
+	font-size: 24px;
 	text-align: center;
+	color: #4ab866;
+	margin-bottom: 20px;
+}
+
+.bluehost-store__price b {
+	font-weight: 700;
 }
 
 .bluehost-store__form-submit {
 	float: none;
 	margin: 0;
-	margin-top: 20px;
 	white-space: nowrap;
 }
 
 .bluehost-store__back-button-wrapper {
 	text-align: center;
 	margin: 24px 0;
+}
+
+.bluehost-store__bluehost-logo {
+	display: block;
+	width: 145px;
+	height: 30px;
+	margin-bottom: 18px;
 }

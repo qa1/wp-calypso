@@ -12,6 +12,8 @@ import FormButton from 'components/forms/form-button';
 import StepHeader from 'signup/step-header';
 import Button from 'components/button';
 
+import SitegroundLogo from './siteground-logo';
+
 export default React.createClass( {
 	displayName: 'SitegroundStoreStep',
 
@@ -25,18 +27,21 @@ export default React.createClass( {
 		return (
 			<div className="siteground-store">
 				<StepHeader
-					headerText={ this.translate( 'Create your WordPress Store' ) }
+					headerText={ this.translate( 'Create a WordPress Store' ) }
 					subHeaderText={ this.translate( 'Our partners at SiteGround and WooCommerce are here for you' ) }
 				/>
 
 				<div className="siteground-store__container">
 					<div className="siteground-store__copy">
-						{ this.translate( 'We\'ve partnered with SiteGround, a top-notch WordPress hosts with a knack for building great e-commerce stores using WooCommerce.' ) }
+						<SitegroundLogo />
+						<div className="siteground-store__text">
+							{ this.translate( 'We\'ve partnered with SiteGround, a top-notch WordPress hosts with a knack for building great e-commerce stores using WooCommerce.' ) }
+						</div>
 					</div>
 
 					<LoggedOutForm className="siteground-store__form" onSubmit={ this.onSubmit }>
-						{ this.translate( 'Starting at' ) }
-						<span className="siteground-store__price"> <b>$7.95</b>/mo </span>
+						<span className="sitegrond-store__price-text"> { this.translate( 'Starting at' ) } </span>
+						<span className="siteground-store__price"> <b>$3.95</b>/mo </span>
 						<FormButton className="siteground-store__form-submit"> { this.translate( 'Create Store' ) } </FormButton>
 					</LoggedOutForm>
 				</div>
@@ -48,6 +53,7 @@ export default React.createClass( {
 					</Button>
 				</div>
 			</div>
+
 		);
 	}
 
