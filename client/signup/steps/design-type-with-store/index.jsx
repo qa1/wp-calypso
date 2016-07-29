@@ -11,8 +11,11 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import analytics from 'lib/analytics';
 import Card from 'components/card';
+import { abtest } from 'lib/abtest';
 
 import PressableStoreStep from './pressable-store';
+import BluehostStoreStep from './bluehost-store';
+import SitegroundStoreStep from './siteground-store';
 
 export default React.createClass( {
 	displayName: 'DesignTypeWithStoreStep',
@@ -55,9 +58,27 @@ export default React.createClass( {
 		);
 	},
 
+	renderStoreStep() {
+		switch ( abtest( 'signupStoreBenchmarking' ) ) {
+			case 'bluehost':
+			case 'bluehostWithWoo':
+				return (
+					<BluehostStoreStep { ... this.props } onBackClick={ this.handleStoreBackClick }/>
+				);
+			case 'siteground':
+				return (
+					<SitegroundStoreStep { ... this.props } onBackClick={ this.handleStoreBackClick }/>
+				);
+			default:
+				return (
+					<PressableStoreStep	{ ... this.props } ref={ this.onPressableStoreStepRef } onBackClick={ this.handleStoreBackClick }/>
+				);
+		}
+	},
+
 	render() {
-		let pressableWrapperClassName = classNames( {
-			'design-type-with-store__pressable-wrapper': true,
+		let storeWrapperClassName = classNames( {
+			'design-type-with-store__store-wrapper': true,
 			'is-hidden': ! this.state.showStore,
 		} );
 
@@ -68,8 +89,8 @@ export default React.createClass( {
 
 		return (
 			<div className="design-type-with-store">
-				<div className={ pressableWrapperClassName } >
-					<PressableStoreStep { ... this.props } ref={ this.onPressableStoreStepRef } onBackClick={ this.handlePressableStoreBackClick }/>
+				<div className={ storeWrapperClassName } >
+					{ this.renderStoreStep() }
 				</div>
 				<div className={ sectionWrapperClassName }>
 					<StepWrapper
@@ -96,7 +117,7 @@ export default React.createClass( {
 		}, 1 );
 	},
 
-	handlePressableStoreBackClick() {
+	handleStoreBackClick() {
 		this.setState( {
 			showStore: false
 		} );

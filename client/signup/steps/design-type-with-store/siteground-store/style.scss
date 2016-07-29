@@ -1,0 +1,39 @@
+.siteground-store__container {
+	display: flex;
+	align-items: stretch;
+	max-width: 600px;
+	margin: 0 auto;
+	border: 1px #becad3 solid;
+}
+
+.siteground-store__copy {
+	padding: 20px;
+	font-size: 14px;
+	background-color: white;
+}
+
+.siteground-store__form {
+	margin: 0;
+	padding: 20px;
+	text-align: center;
+	background-color: #f3f6f8;
+}
+
+.siteground-store__price {
+	font-size: 24px;
+	color: #48b769;
+	display: block;
+	text-align: center;
+}
+
+.siteground-store__form-submit {
+	float: none;
+	margin: 0;
+	margin-top: 20px;
+	white-space: nowrap;
+}
+
+.siteground-store__back-button-wrapper {
+	text-align: center;
+	margin: 24px 0;
+}

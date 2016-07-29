@@ -60,6 +60,17 @@ module.exports = {
 		defaultVariation: 'designTypeWithoutStore',
 		allowExistingUsers: false,
 	},
+	signupStoreBenchmarking: {
+		datestamp: '20160805',
+		variations: {
+			pressable: 94,
+			bluehost: 2,
+			bluehostWithWoo: 2,
+			siteground: 2
+		},
+		defaultVariation: 'pressable',
+		allowExistingUsers: false,
+	},
 	translatorInvitation: {
 		datestamp: '20150910',
 		variations: {
