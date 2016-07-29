@@ -311,8 +311,7 @@ export default React.createClass( {
 			this.props.isDirty &&
 			this.props.hasContent &&
 			!! this.props.post &&
-			! postUtils.isPublished( this.props.post ) &&
-			! ( this.props.post.status === 'future' );
+			! postUtils.isPublished( this.props.post );
 	},
 
 	isPreviewEnabled: function() {
@@ -334,10 +333,6 @@ export default React.createClass( {
 
 	onPrimaryButtonClick: function() {
 		this.trackPrimaryButton();
-
-		if ( postUtils.isFutureDated( this.props.post ) ) {
-			return this.props.onSave( 'future' );
-		}
 
 		if ( postUtils.isPublished( this.props.savedPost ) &&
 			! postUtils.isBackDatedPublished( this.props.savedPost )
