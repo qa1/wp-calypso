@@ -122,10 +122,16 @@ describe( 'PostByline', () => {
 				const authorLessByline = shallow( <PostByline post={ omit( post, 'author' ) } /> );
 				assert.lengthOf( authorLessByline.find( authorSelector ), 0 );
 			} );
+
 			it( 'does not render if the post author does not have a name', () => {
 				const author = omit( post.author, 'name' );
-				const nameLessByline = shallow( <postByline post={ Object.assign( {}, post, { author } ) } /> );
+				const nameLessByline = shallow( <PostByline post={ Object.assign( {}, post, { author } ) } /> );
 				assert.lengthOf( nameLessByline.find( authorSelector ), 0 );
+			} );
+
+			it( 'does not render if the post is a discover pick', () => {
+				const disoverPick = shallow( <PostByline post={ post } isDiscoverPost={ true } /> );
+				assert.lengthOf( disoverPick.find( authorSelector ), 0 );
 			} );
 		} );
 
