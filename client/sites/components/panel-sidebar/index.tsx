@@ -21,11 +21,7 @@ export function SidebarItem( { href, children }: { href: string; children: React
 }
 
 export function Sidebar( { children }: { children: ReactNode } ) {
-	return (
-		<div className="panel-sidebar">
-			<ul>{ children }</ul>
-		</div>
-	);
+	return <ul className="panel-sidebar">{ children }</ul>;
 }
 
 export function PanelWithSidebar( { children }: { children: ReactNode } ) {
