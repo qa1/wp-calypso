@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+import { FullPostView } from 'calypso/blocks/reader-full-post';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPage } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
@@ -97,7 +98,15 @@ const Recent = () => {
 					defaultLayouts={ defaultLayouts as SupportedLayouts }
 				/>
 			</div>
-			<div className="recent-feed__post-column">{ selectedItem && post && post.title }</div>
+			<div className="recent-feed__post-column">
+				{ selectedItem && post && (
+					<FullPostView
+						post={ post }
+						referralStream={ window.location.pathname }
+						notificationsOpen
+					/>
+				) }
+			</div>
 		</div>
 	);
 };
