@@ -54,8 +54,8 @@ export const useLoadPreviousChat = ( {
 							chat_id: conversation.metadata[ 'odieChatId' ]
 								? Number( conversation.metadata[ 'odieChatId' ] )
 								: null,
-							...existingChat,
 							conversationId: conversation.id,
+							clientId: conversation.clientId,
 							messages: [ ...messages, ...( conversation.messages as Message[] ) ],
 						} );
 					}
