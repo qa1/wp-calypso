@@ -66,9 +66,11 @@ export const useGetCombinedChat = ( shouldUseHelpCenterExperience: boolean | und
 					}
 				} );
 			}
-		} else {
+		} else if ( currentSupportInteraction ) {
 			setMainChatState( ( prevChat ) => ( {
-				...prevChat,
+				...( prevChat.supportInteractionId !== currentSupportInteraction!.uuid
+					? emptyChat
+					: prevChat ),
 				supportInteractionId: currentSupportInteraction!.uuid,
 				status: 'loaded',
 			} ) );
