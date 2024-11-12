@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import ConfirmModal from 'calypso/components/confirm-modal';
 import { HostingHeroButton } from 'calypso/components/hosting-hero';
 import { useMigrationCancellation } from 'calypso/data/site-migration/landing/use-migration-cancellation';
+import { useSiteExcerptsQueryInvalidator } from 'calypso/data/sites/use-site-excerpts-query';
 import { addQueryArgs } from 'calypso/lib/url';
 import { getMigrationType } from 'calypso/sites-dashboard/utils';
 import { useDispatch } from 'calypso/state';
@@ -49,10 +50,13 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 		error: cancellationError,
 	} = useMigrationCancellation( site.ID );
 	const dispatch = useDispatch();
+	const invalidateSiteExcerptsQuery = useSiteExcerptsQueryInvalidator();
 
 	const reloadSite = useCallback( () => {
 		dispatch( requestSite( site.ID ) );
-	}, [ dispatch, site.ID ] );
+		// invalidate the site excerpts query to refresh the /sites sidebar
+		invalidateSiteExcerptsQuery();
+	}, [ dispatch, invalidateSiteExcerptsQuery, site.ID ] );
 
 	useEffect( () => {
 		if ( isCancellationSuccess ) {
