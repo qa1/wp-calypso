@@ -1,7 +1,9 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import ConfirmModal from 'calypso/components/confirm-modal';
 import { HostingHeroButton } from 'calypso/components/hosting-hero';
 import { useMigrationCancellation } from 'calypso/data/site-migration/landing/use-migration-cancellation';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -33,15 +35,18 @@ const getContinueMigrationUrl = ( site: SiteDetails ): string | null => {
 
 export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 	const continueMigrationUrl = getContinueMigrationUrl( site );
+	const [ isConfirmModalVisible, setIsConfirmModalVisible ] = useState( false );
 
 	const title = translate( 'Your WordPress site is ready to be migrated' );
 	const subTitle = translate(
 		'Start your migration today and get ready for unmatched WordPress hosting.'
 	);
+
 	const {
 		mutate: cancelMigration,
 		isSuccess: isCancellationSuccess,
 		isPending: isCancelling,
+		error: cancellationError,
 	} = useMigrationCancellation( site.ID );
 	const dispatch = useDispatch();
 
@@ -51,12 +56,20 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 
 	useEffect( () => {
 		if ( isCancellationSuccess ) {
+			recordTracksEvent( 'calypso_pending_migration_canceled' );
 			reloadSite();
 		}
 	}, [ isCancellationSuccess, reloadSite ] );
 
+	useEffect( () => {
+		if ( cancellationError ) {
+			recordTracksEvent( 'calypso_pending_migration_cancel_error', { error: cancellationError } );
+		}
+	}, [ cancellationError ] );
+
 	const handleCancelButtonClick = useCallback( () => {
 		cancelMigration();
+		setIsConfirmModalVisible( false );
 	}, [ cancelMigration ] );
 
 	if ( isCancelling || isCancellationSuccess ) {
@@ -71,6 +84,17 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 
 	return (
 		<Container>
+			<ConfirmModal
+				isVisible={ isConfirmModalVisible }
+				onCancel={ () => setIsConfirmModalVisible( false ) }
+				onConfirm={ handleCancelButtonClick }
+				title={ translate( 'Cancel migration' ) }
+				text={ translate(
+					"When you cancel your migration your original site will stay as is. You can always restart the migration when you're ready."
+				) }
+				confirmButtonLabel={ translate( 'Cancel migration' ) }
+				cancelButtonLabel={ translate( "Don't cancel migration" ) }
+			/>
 			<Header title={ title } subTitle={ subTitle }>
 				{ continueMigrationUrl && (
 					<div className="migration-pending__buttons">
@@ -80,7 +104,7 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 						<Button
 							variant="link"
 							className="migration-pending__cancel-button"
-							onClick={ handleCancelButtonClick }
+							onClick={ () => setIsConfirmModalVisible( true ) }
 						>
 							{ translate( 'Cancel migration' ) }
 						</Button>
