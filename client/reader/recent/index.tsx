@@ -1,3 +1,4 @@
+import { SubscriptionManager } from '@automattic/data-stores';
 import { WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, filterSortAndPaginate, SupportedLayouts, View } from '@wordpress/dataviews';
@@ -11,11 +12,13 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
+import ReaderOnboarding from '../onboarding';
 import EngagementBar from './engagement-bar';
 import RecentPostField from './recent-post-field';
 import RecentSeenField from './recent-seen-field';
 import type { PostItem, ReaderPost } from './types';
 import type { AppState } from 'calypso/types';
+
 import './style.scss';
 
 const Recent = () => {
@@ -163,50 +166,75 @@ const Recent = () => {
 		} ) );
 	}, [ selectedRecentSidebarFeedId ] );
 
+	const { data: subscriptionsCount } = SubscriptionManager.useSubscriptionsCountQuery();
+	const isEmpty = subscriptionsCount?.blogs === 0;
+
 	return (
 		<div className="recent-feed">
-			<div className={ `recent-feed__list-column ${ selectedItem ? 'has-overlay' : '' }` }>
+			<div
+				className={ `recent-feed__list-column ${ selectedItem && ! isEmpty ? 'has-overlay' : '' } ${
+					isEmpty ? 'recent-feed-empty' : ''
+				}` }
+			>
 				<div className="recent-feed__list-column-header">
-					<FormattedHeader align="left" headerText={ translate( 'All Recent' ) } />
+					<FormattedHeader align="left" headerText={ translate( 'Recent' ) } />
 				</div>
 				<div className="recent-feed__list-column-content">
-					<DataViews
-						getItemId={ ( item: ReaderPost, index = 0 ) =>
-							item.postId?.toString() ?? `item-${ index }`
-						}
-						view={ view as View }
-						fields={ fields }
-						data={ shownData }
-						onChangeView={ ( newView: View ) =>
-							setView( {
-								type: newView.type,
-								fields: newView.fields ?? [],
-								layout: view.layout,
-								perPage: newView.perPage,
-								page: newView.page,
-								search: newView.search,
-							} )
-						}
-						paginationInfo={ paginationInfo }
-						defaultLayouts={ defaultLayouts as SupportedLayouts }
-						isLoading={ data?.isRequesting }
-					/>
+					{ isEmpty ? (
+						<>
+							<p>
+								{ translate(
+									'{{strong}}Welcome!{{/strong}} Follow your favorite sites and their latest posts will appear here. Read, like, and comment in a distraction-free environment. Get started by selecting your interests below:',
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+								) }
+							</p>
+							<ReaderOnboarding forceShow />
+						</>
+					) : (
+						<DataViews
+							getItemId={ ( item: ReaderPost, index = 0 ) =>
+								item.postId?.toString() ?? `item-${ index }`
+							}
+							view={ view as View }
+							fields={ fields }
+							data={ shownData }
+							onChangeView={ ( newView: View ) =>
+								setView( {
+									type: newView.type,
+									fields: newView.fields ?? [],
+									layout: view.layout,
+									perPage: newView.perPage,
+									page: newView.page,
+									search: newView.search,
+								} )
+							}
+							paginationInfo={ paginationInfo }
+							defaultLayouts={ defaultLayouts as SupportedLayouts }
+							isLoading={ data?.isRequesting }
+						/>
+					) }
 				</div>
 			</div>
-			<div className={ `recent-feed__post-column ${ selectedItem ? 'overlay' : '' }` }>
-				{ selectedItem && getPostFromItem( selectedItem ) && (
-					<>
-						<AsyncLoad
-							require="calypso/blocks/reader-full-post"
-							feedId={ selectedItem.feedId }
-							postId={ selectedItem.postId }
-							onClose={ () => setSelectedItem( null ) }
-							layout="recent"
-						/>
-						<EngagementBar feedId={ selectedItem?.feedId } postId={ selectedItem?.postId } />
-					</>
-				) }
-			</div>
+			{ ! isEmpty && (
+				<div className={ `recent-feed__post-column ${ selectedItem ? 'overlay' : '' }` }>
+					{ selectedItem && getPostFromItem( selectedItem ) && (
+						<>
+							<AsyncLoad
+								require="calypso/blocks/reader-full-post"
+								feedId={ selectedItem.feedId }
+								postId={ selectedItem.postId }
+								onClose={ () => setSelectedItem( null ) }
+								layout="recent"
+							/>
+							<EngagementBar feedId={ selectedItem?.feedId } postId={ selectedItem?.postId } />
+						</>
+					) }
+				</div>
+			) }
 		</div>
 	);
 };
