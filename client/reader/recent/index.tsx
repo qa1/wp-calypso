@@ -31,7 +31,14 @@ const Recent = () => {
 		page: 1,
 	} );
 
-	const data = useSelector( ( state: AppState ) => state.reader?.streams?.recent );
+	const selectedRecentSidebarFeedId = useSelector< AppState, number | null >(
+		( state ) => state.readerUi.sidebar.selectedRecentSite
+	);
+
+	const streamKey =
+		selectedRecentSidebarFeedId !== null ? `recent:${ selectedRecentSidebarFeedId }` : 'recent';
+
+	const data = useSelector( ( state: AppState ) => state.reader?.streams?.[ streamKey ] );
 
 	const posts = useSelector( ( state: AppState ) => {
 		const items = data?.items;
@@ -106,10 +113,10 @@ const Recent = () => {
 	];
 
 	const fetchData = useCallback( () => {
-		dispatch( viewStream( 'recent', window.location.pathname ) as AnyAction );
+		dispatch( viewStream( streamKey, window.location.pathname ) as AnyAction );
 		dispatch(
 			requestPaginatedStream( {
-				streamKey: 'recent',
+				streamKey,
 				page: view.page,
 				perPage: view.perPage,
 			} ) as AnyAction
@@ -117,12 +124,12 @@ const Recent = () => {
 		// Fetch the next page in advance.
 		dispatch(
 			requestPaginatedStream( {
-				streamKey: 'recent',
+				streamKey,
 				page: view?.page ? view.page + 1 : undefined,
 				perPage: view.perPage,
 			} ) as AnyAction
 		);
-	}, [ dispatch, view ] );
+	}, [ dispatch, view, streamKey ] );
 
 	const paginationInfo = useMemo( () => {
 		return {
@@ -146,6 +153,15 @@ const Recent = () => {
 			setSelectedItem( data.items[ 0 ] );
 		}
 	}, [ isWide, data?.items, selectedItem ] );
+
+	// When the selected feed changes, clear the selected item and reset the page to 1.
+	useEffect( () => {
+		setSelectedItem( null );
+		setView( ( prevView ) => ( {
+			...prevView,
+			page: 1,
+		} ) );
+	}, [ selectedRecentSidebarFeedId ] );
 
 	return (
 		<div className="recent-feed">
