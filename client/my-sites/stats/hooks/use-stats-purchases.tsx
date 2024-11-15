@@ -59,8 +59,8 @@ const isCommercialPurchaseOwned = ( ownedPurchases: Purchase[] ) => {
 const supportCommercialPurchaseUse = ( ownedPurchases: Purchase[] ) => {
 	return (
 		isCommercialPurchaseOwned( ownedPurchases ) ||
-		[ ...JETPACK_BUSINESS_PLANS, ...JETPACK_COMPLETE_PLANS ].some( ( plan ) =>
-			isProductOwned( ownedPurchases, plan )
+		[ ...JETPACK_BUSINESS_PLANS, ...JETPACK_COMPLETE_PLANS, ...JETPACK_GROWTH_PLANS ].some(
+			( plan ) => isProductOwned( ownedPurchases, plan )
 		)
 	);
 };
@@ -79,10 +79,6 @@ export const hasCompletePlan = ( ownedPurchases: Purchase[] ) => {
 
 export const hasSecurityPlan = ( ownedPurchases: Purchase[] ) => {
 	return areProductsOwned( ownedPurchases, [ ...JETPACK_SECURITY_PLANS ] );
-};
-
-export const hasGrowthPlan = ( ownedPurchases: Purchase[] ) => {
-	return areProductsOwned( ownedPurchases, [ ...JETPACK_GROWTH_PLANS ] );
 };
 
 export const hasSupportedCommercialUse = ( state: object, siteId: number | null ) => {
