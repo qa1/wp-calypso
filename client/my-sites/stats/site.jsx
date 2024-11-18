@@ -469,6 +469,9 @@ class StatsSite extends Component {
 
 						{ isNewDateFilteringEnabled && ( //adds a new chart instance for the newdatefiltering project
 							<ChartTabs
+								slug={ slug }
+								period={ this.props.period }
+								queryParams={ context.query }
 								activeTab={ getActiveTab( this.props.chartTab ) }
 								activeLegend={ this.state.activeLegend }
 								availableLegend={ this.getAvailableLegend() }
@@ -478,7 +481,6 @@ class StatsSite extends Component {
 								switchTab={ this.switchChart }
 								charts={ CHARTS }
 								queryDate={ queryDate }
-								period={ this.props.period }
 								chartTab={ this.props.chartTab }
 								customQuantity={ customChartQuantity }
 								customRange={ customChartRange }
@@ -499,7 +501,6 @@ class StatsSite extends Component {
 								chartTab={ this.props.chartTab }
 								customQuantity={ customChartQuantity }
 								customRange={ customChartRange }
-								hideLegend // in the legacy chart the legend is displayed up in the header insdead of in the chart, so we hide it here
 							/>
 						) }
 					</>
