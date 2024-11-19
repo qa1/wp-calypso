@@ -147,6 +147,9 @@ class RegisterDomainStep extends Component {
 		 * It will be removed if there is still no need of it once the test concludes.
 		 */
 		hasPendingRequests: PropTypes.bool,
+
+		// Whether subdomains (.wordpress.com, .blog subdomains) should be queried - used for hiding free subdomains in specific cases
+		shouldQuerySubdomains: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -169,6 +172,7 @@ class RegisterDomainStep extends Component {
 		otherManagedSubdomains: null,
 		hasPendingRequests: false,
 		forceExactSuggestion: false,
+		shouldQuerySubdomains: true,
 	};
 
 	constructor( props ) {
@@ -217,6 +221,10 @@ class RegisterDomainStep extends Component {
 	}
 
 	isSubdomainResultsVisible() {
+		if ( ! this.props.shouldQuerySubdomains ) {
+			return false;
+		}
+
 		return (
 			this.props.includeWordPressDotCom ||
 			this.props.includeDotBlogSubdomain ||
@@ -830,7 +838,7 @@ class RegisterDomainStep extends Component {
 		} );
 	};
 
-	repeatSearch = ( stateOverride = {}, { shouldQuerySubdomains = true } = {} ) => {
+	repeatSearch = ( stateOverride = {} ) => {
 		this.save();
 
 		const { lastQuery } = this.state;
@@ -854,7 +862,7 @@ class RegisterDomainStep extends Component {
 		};
 		debug( 'Repeating a search with the following input for setState', nextState );
 		this.setState( nextState, () => {
-			loadingResults && this.onSearch( lastQuery, { shouldQuerySubdomains } );
+			loadingResults && this.onSearch( lastQuery );
 		} );
 	};
 
@@ -1378,7 +1386,7 @@ class RegisterDomainStep extends Component {
 		} );
 	};
 
-	onSearch = async ( searchQuery, { shouldQuerySubdomains = true } = {} ) => {
+	onSearch = async ( searchQuery ) => {
 		debug( 'onSearch handler was triggered with query', searchQuery );
 
 		const domain = getDomainSuggestionSearch( searchQuery, MIN_QUERY_LENGTH );
@@ -1423,7 +1431,7 @@ class RegisterDomainStep extends Component {
 					.catch( () => [] ) // handle the error and return an empty list
 					.then( this.handleDomainSuggestions( domain ) );
 
-				if ( shouldQuerySubdomains && this.isSubdomainResultsVisible() ) {
+				if ( this.isSubdomainResultsVisible() ) {
 					this.getSubdomainSuggestions( domain, timestamp );
 				}
 			}
