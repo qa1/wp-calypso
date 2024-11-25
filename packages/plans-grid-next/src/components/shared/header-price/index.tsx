@@ -7,11 +7,13 @@ import {
 } from '@automattic/calypso-products';
 import { PlanPrice } from '@automattic/components';
 import { AddOns, Plans } from '@automattic/data-stores';
+import { useEffect } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../grid-context';
 import useIsLargeCurrency from '../../../hooks/use-is-large-currency';
 import { usePlanPricingInfoFromGridPlans } from '../../../hooks/use-plan-pricing-info-from-grid-plans';
+import { useHeaderPriceContext } from './header-price-context';
 import type { GridPlan } from '../../../types';
 import './style.scss';
 
@@ -44,6 +46,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	const translate = useTranslate();
 	const { gridPlansIndex, enableTermSavingsPriceDisplay, siteId, coupon, helpers } =
 		usePlansGridContext();
+	const { isAnyPlanPriceDiscounted, setIsAnyPlanPriceDiscounted } = useHeaderPriceContext();
 	const {
 		current,
 		pricing: { currencyCode, originalPrice, discountedPrice, introOffer, billingPeriod },
@@ -56,14 +59,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	 * We currently only support the `One time discount` in some currencies
 	 */
 	const isGridPlanOneTimeDiscounted = Number.isFinite( discountedPrice.monthly );
-	const isAnyVisibleGridPlanOneTimeDiscounted = visibleGridPlans.some( ( { pricing } ) =>
-		Number.isFinite( pricing.discountedPrice.monthly )
-	);
-
 	const isGridPlanOnIntroOffer = introOffer && ! introOffer.isOfferComplete;
-	const isAnyVisibleGridPlanOnIntroOffer = visibleGridPlans.some(
-		( { pricing } ) => pricing.introOffer && ! pricing.introOffer.isOfferComplete
-	);
 
 	const { prices } = usePlanPricingInfoFromGridPlans( { gridPlans: visibleGridPlans } );
 	const isLargeCurrency = useIsLargeCurrency( {
@@ -81,6 +77,30 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		siteId,
 		useCheckPlanAvailabilityForPurchase: helpers?.useCheckPlanAvailabilityForPurchase,
 	} )?.[ termVariantPlanSlug ?? '' ];
+
+	const termVariantPrice =
+		termVariantPricing?.discountedPrice.monthly ?? termVariantPricing?.originalPrice.monthly ?? 0;
+	const planPrice = discountedPrice.monthly ?? originalPrice.monthly ?? 0;
+	const savings =
+		termVariantPrice > planPrice
+			? Math.floor( ( ( termVariantPrice - planPrice ) / termVariantPrice ) * 100 )
+			: 0;
+
+	useEffect( () => {
+		if (
+			isGridPlanOneTimeDiscounted ||
+			isGridPlanOnIntroOffer ||
+			( enableTermSavingsPriceDisplay && savings )
+		) {
+			setIsAnyPlanPriceDiscounted( true );
+		}
+	}, [
+		enableTermSavingsPriceDisplay,
+		isGridPlanOnIntroOffer,
+		isGridPlanOneTimeDiscounted,
+		savings,
+		setIsAnyPlanPriceDiscounted,
+	] );
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) || ! isPricedPlan ) {
 		return null;
@@ -160,14 +180,6 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		);
 	}
 
-	const termVariantPrice =
-		termVariantPricing?.discountedPrice.monthly ?? termVariantPricing?.originalPrice.monthly ?? 0;
-	const planPrice = discountedPrice.monthly ?? originalPrice.monthly ?? 0;
-	const savings =
-		termVariantPrice > planPrice
-			? Math.floor( ( ( termVariantPrice - planPrice ) / termVariantPrice ) * 100 )
-			: 0;
-
 	if ( enableTermSavingsPriceDisplay && termVariantPricing && savings ) {
 		return (
 			<div className="plans-grid-next-header-price">
@@ -205,11 +217,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		);
 	}
 
-	if (
-		isAnyVisibleGridPlanOneTimeDiscounted ||
-		isAnyVisibleGridPlanOnIntroOffer ||
-		enableTermSavingsPriceDisplay
-	) {
+	if ( isAnyPlanPriceDiscounted ) {
 		return (
 			<div className="plans-grid-next-header-price">
 				<div className="plans-grid-next-header-price__badge is-hidden">' '</div>
