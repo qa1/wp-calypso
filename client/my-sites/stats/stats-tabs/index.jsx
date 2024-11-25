@@ -46,30 +46,41 @@ class StatsTabs extends Component {
 	};
 
 	render() {
-		const { children, data, previousData, tabs, switchTab, selectedTab, borderless, aggregate } =
-			this.props;
+		const {
+			children,
+			data,
+			previousData,
+			tabs,
+			switchTab,
+			selectedTab,
+			borderless,
+			aggregate,
+			tabCountsAlt,
+			tabCountsAltComp,
+		} = this.props;
 
 		let statsTabs;
 
 		if ( data && ! children ) {
-			const activeData = this.formatData( data, aggregate );
-			const activePreviousData = this.formatData( previousData );
+			const trendData = this.formatData( data, aggregate );
+			const activeData = { ...tabCountsAlt, ...trendData };
+			const activePreviousData = { ...tabCountsAltComp, ...this.formatData( previousData ) };
 
 			statsTabs = tabs.map( ( tab ) => {
-				const hasData =
-					activeData && activeData[ tab.attr ] >= 0 && activeData[ tab.attr ] !== null;
-
+				const hasTrend = trendData?.[ tab.attr ] >= 0 && trendData[ tab.attr ] !== null;
+				const hasData = activeData?.[ tab.attr ] >= 0 && activeData[ tab.attr ] !== null;
 				const value = hasData ? activeData[ tab.attr ] : null;
-				const previousValue = activePreviousData && activePreviousData[ tab.attr ];
+				const previousValue =
+					activePreviousData?.[ tab.attr ] !== null ? activePreviousData[ tab.attr ] : null;
 
 				const tabOptions = {
 					attr: tab.attr,
 					icon: tab.icon,
-					className: clsx( tab.className, { 'is-highlighted': aggregate } ),
+					className: clsx( tab.className, { 'is-highlighted': previousData } ),
 					label: tab.label,
 					loading: ! hasData,
 					selected: selectedTab === tab.attr,
-					tabClick: switchTab,
+					tabClick: hasTrend ? switchTab : undefined,
 					value,
 					format: tab.format,
 				};
