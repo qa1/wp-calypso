@@ -54,6 +54,8 @@ export class DateRange extends Component {
 		overlay: PropTypes.node,
 		customTitle: PropTypes.string,
 		onShortcutClick: PropTypes.func,
+		// Temporary prop to enable new date filtering UI.
+		isNewDateFilteringEnabled: PropTypes.bool,
 		trackExternalDateChanges: PropTypes.bool,
 	};
 
@@ -72,6 +74,7 @@ export class DateRange extends Component {
 		useArrowNavigation: false,
 		overlay: null,
 		customTitle: '',
+		isNewDateFilteringEnabled: false,
 		trackExternalDateChanges: false,
 	};
 
@@ -492,6 +495,7 @@ export class DateRange extends Component {
 								startDate={ this.state.startDate }
 								endDate={ this.state.endDate }
 								onShortcutClick={ this.props.onShortcutClick } // for tracking shortcut clicks
+								isNewDateFilteringEnabled={ this.props.isNewDateFilteringEnabled }
 							/>
 						</div>
 					) }
