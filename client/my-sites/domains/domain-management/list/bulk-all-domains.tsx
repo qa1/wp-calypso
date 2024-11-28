@@ -38,7 +38,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 		html {
 			overflow-y: auto;
 		}
-		body.is-section-domains {
+		body.is-bulk-all-domains-page {
 			background: var( --studio-gray-0 );
 
 			&.rtl .layout__content {
