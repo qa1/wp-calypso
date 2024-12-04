@@ -1,5 +1,8 @@
+import { SHOW_ALL_SLUG } from '@automattic/design-picker';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
-import { Category } from '../types';
+import { gatherCategories } from './utils';
+import type { Category, Design } from '@automattic/design-picker';
 
 export interface Categorization {
 	selection: string | null;
@@ -13,19 +16,27 @@ interface UseCategorizationOptions {
 	sort?: ( a: Category, b: Category ) => number;
 }
 
-export function useCategorizationFromApi(
-	categoryMap: Record< string, Category >,
-	{ defaultSelection, sort }: UseCategorizationOptions
+export function useCategorization(
+	designs: Design[],
+	{ defaultSelection, showAllFilter, sort }: UseCategorizationOptions
 ): Categorization {
-	const categories = useMemo( () => {
-		const categoryMapKeys = Object.keys( categoryMap ) || [];
-		const result = categoryMapKeys.map( ( slug ) => ( {
-			...categoryMap[ slug ],
-			slug,
-		} ) );
+	const translate = useTranslate();
 
-		return result.sort( sort );
-	}, [ categoryMap ] );
+	const categories = useMemo( () => {
+		const result = gatherCategories( designs );
+		if ( sort ) {
+			result.sort( sort );
+		}
+
+		if ( showAllFilter && designs.length ) {
+			result.unshift( {
+				name: translate( 'Show All' ),
+				slug: SHOW_ALL_SLUG,
+			} );
+		}
+
+		return result;
+	}, [ designs, showAllFilter, sort, translate ] );
 
 	const [ selection, onSelect ] = useState< string | null >(
 		chooseDefaultSelection( categories, defaultSelection )
