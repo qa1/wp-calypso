@@ -10,8 +10,8 @@ import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderOnboarding from 'calypso/reader/onboarding';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import ReaderStream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
-import ReaderListFollowedSites from 'calypso/reader/stream/reader-list-followed-sites';
 import Recent from '../recent';
+import ReaderStreamSidebar from './reader-stream-sidebar';
 import { useFollowingView } from './view-preference';
 import ViewToggle from './view-toggle';
 import './style.scss';
@@ -70,7 +70,7 @@ function FollowingStream( { ...props } ) {
 				<ReaderStream
 					{ ...props }
 					className="following"
-					streamSidebar={ () => <ReaderListFollowedSites path={ window.location.pathname } /> }
+					streamSidebar={ () => <ReaderStreamSidebar /> }
 				>
 					<BloganuaryHeader />
 					<NavigationHeader
