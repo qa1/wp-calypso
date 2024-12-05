@@ -184,6 +184,7 @@ interface DesignPickerProps {
 	siteActiveTheme?: string | null;
 	showActiveThemeBadge?: boolean;
 	isTierFilterEnabled?: boolean;
+	isMultiFilterEnabled?: boolean;
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -202,6 +203,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	siteActiveTheme = null,
 	showActiveThemeBadge = false,
 	isTierFilterEnabled = false,
+	isMultiFilterEnabled = false,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 	const filteredDesigns = useFilteredDesigns( designs, categorization );
@@ -218,7 +220,8 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						className="design-picker__category-filter"
 						categories={ categorization.categories }
 						onSelect={ categorization.onSelect }
-						selectedSlug={ categorization.selection }
+						selectedSlugs={ categorization.selections }
+						isMultiSelection={ isMultiFilterEnabled }
 					/>
 				) }
 				{ assemblerCtaData.shouldGoToAssemblerStep && isSiteAssemblerEnabled && (
@@ -239,7 +242,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					return (
 						<DesignCard
 							key={ design.recipe?.slug ?? design.slug ?? index }
-							category={ categorization?.selection }
+							category={ categorization?.selections.join( ',' ) }
 							design={ design }
 							locale={ locale }
 							isPremiumThemeAvailable={ isPremiumThemeAvailable }
@@ -279,6 +282,7 @@ export interface UnifiedDesignPickerProps {
 	siteActiveTheme?: string | null;
 	showActiveThemeBadge?: boolean;
 	isTierFilterEnabled?: boolean;
+	isMultiFilterEnabled?: boolean;
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
@@ -299,6 +303,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	siteActiveTheme = null,
 	showActiveThemeBadge = false,
 	isTierFilterEnabled = false,
+	isMultiFilterEnabled = false,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 
@@ -336,6 +341,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					siteActiveTheme={ siteActiveTheme }
 					showActiveThemeBadge={ showActiveThemeBadge }
 					isTierFilterEnabled={ isTierFilterEnabled }
+					isMultiFilterEnabled={ isMultiFilterEnabled }
 				/>
 				{ bottomAnchorContent }
 			</div>

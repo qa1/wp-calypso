@@ -17,7 +17,7 @@ import {
 } from '@automattic/data-stores';
 import {
 	UnifiedDesignPicker,
-	useCategorizationFromApi,
+	useCategorization,
 	getDesignPreviewUrl,
 	isAssemblerDesign,
 	isAssemblerSupported,
@@ -118,6 +118,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 
 	const isGoalsHoldout = useIsGoalsHoldout( stepName );
+
+	const isGoalCentricFeature = isEnabled( 'design-picker/goal-centric' ) && ! isGoalsHoldout;
 
 	const queryParams = useQuery();
 	const { goBack, submit, exitFlow } = navigation;
@@ -232,10 +234,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		goals,
 		addedGoalsExpAssignment?.variationName === 'treatment'
 	);
-	const categorization = useCategorizationFromApi(
-		allDesigns?.filters?.subject || EMPTY_OBJECT,
-		categorizationOptions
-	);
+	const categorization = useCategorization( allDesigns?.filters?.subject || EMPTY_OBJECT, {
+		...categorizationOptions,
+		isMultiSelection: isGoalCentricFeature,
+	} );
 
 	// ********** Logic for selecting a design and style variation
 	const {
@@ -297,7 +299,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				intent,
 				design,
 			} ),
-			category: categorization.selection,
+			category: categorization.selections?.join( ',' ),
 			...( design.recipe?.pattern_ids && { pattern_ids: design.recipe.pattern_ids.join( ',' ) } ),
 			...( design.recipe?.header_pattern_ids && {
 				header_pattern_ids: design.recipe.header_pattern_ids.join( ',' ),
@@ -329,7 +331,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	function trackAllDesignsView() {
 		recordTracksEvent( 'calypso_signup_design_scrolled_to_end', {
 			intent,
-			category: categorization?.selection,
+			category: categorization?.selections?.join( ',' ),
 		} );
 	}
 
@@ -673,7 +675,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			handleSubmit(
 				{
 					selectedDesign: _selectedDesign,
-					selectedSiteCategory: categorization.selection,
+					selectedSiteCategory: categorization.selections?.join( ',' ),
 				},
 				{ ...( positionIndex >= 0 && { position_index: positionIndex } ) }
 			);
@@ -703,7 +705,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 			handleSubmit( {
 				selectedDesign: _selectedDesign,
-				selectedSiteCategory: categorization.selection,
+				selectedSiteCategory: categorization.selections?.join( ',' ),
 				shouldGoToAssembler,
 			} );
 		} else {
@@ -937,7 +939,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	if ( isDesignFirstFlow ) {
 		categorization.categories = [];
-		categorization.selection = 'blog';
+		categorization.selections = [ 'blog' ];
 	}
 
 	const stepContent = (
@@ -958,7 +960,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			isSiteAssemblerEnabled={ isSiteAssemblerEnabled }
 			siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
 			showActiveThemeBadge={ intent !== 'build' }
-			isTierFilterEnabled={ isEnabled( 'design-picker/goal-centric' ) && ! isGoalsHoldout }
+			isTierFilterEnabled={ isGoalCentricFeature }
+			isMultiFilterEnabled={ isGoalCentricFeature }
 		/>
 	);
 
