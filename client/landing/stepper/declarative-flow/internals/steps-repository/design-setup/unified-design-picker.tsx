@@ -47,8 +47,11 @@ import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { ThemeUpgradeModal as UpgradeModal } from 'calypso/components/theme-upgrade-modal';
 import { useIsSiteAssemblerEnabled } from 'calypso/data/site-assembler';
 import { ActiveTheme, useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
+import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
+import { navigate } from 'calypso/lib/navigate';
 import { urlToSlug } from 'calypso/lib/url';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
@@ -459,6 +462,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 
 	const eligibility = useSelector( ( state ) => site && getEligibility( state, site.ID ) );
+
+	const { isEligible } = useIsBigSkyEligible();
+	const isGoalCentricFeature = isEnabled( 'design-picker/goal-centric' ) && ! isGoalsHoldout;
+	const isBigSkyEligible = isEligible && isGoalCentricFeature;
 
 	const hasEligibilityMessages =
 		! isAtomic &&
@@ -965,6 +972,37 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		/>
 	);
 
+	const bigSkyButtonEventProperties = {
+		is_big_sky_eligible: isBigSkyEligible,
+		// is_filter_included_with_plan_enabled: true/false,
+		// preselected_filters: ??,
+		// selected_filters: ??,
+		// {filter} ??
+	};
+	const bigSkyButtons = (
+		<>
+			{ isBigSkyEligible && (
+				<Button
+					onClick={ () => {
+						navigate(
+							`/setup/site-setup/launch-big-sky?siteSlug=${ siteSlug }&siteId=${ site.ID }`
+						);
+						recordTracksEvent(
+							'calypso_design_picker_big_sky_button_click',
+							bigSkyButtonEventProperties
+						);
+					} }
+				>
+					{ translate( 'Create yours with AI' ) }
+				</Button>
+			) }
+			<TrackComponentView
+				eventName="calypso_design_picker_big_sky_button_impression"
+				eventProperties={ bigSkyButtonEventProperties }
+			/>
+		</>
+	);
+
 	return (
 		<StepContainer
 			stepName={ STEP_NAME }
@@ -973,6 +1011,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			hideFormattedHeader
 			hideSkip
 			backLabelText={ translate( 'Back' ) }
+			customizedActionButtons={ bigSkyButtons }
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }
 			goNext={ handleSubmit }
