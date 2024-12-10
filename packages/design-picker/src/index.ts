@@ -8,6 +8,7 @@ export {
 	getMShotOptions,
 	isAssemblerSupported,
 	isLockedStyleVariation,
+	getCategoryType,
 } from './utils';
 export {
 	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
@@ -22,6 +23,7 @@ export {
 	BUNDLED_THEME,
 	MARKETPLACE_THEME,
 	SHOW_ALL_SLUG,
+	CATEGORIES,
 } from './constants';
 export type {
 	Design,
@@ -33,4 +35,5 @@ export type {
 	StyleVariationStylesColor,
 } from './types';
 export { useCategorization } from './hooks/use-categorization';
+export { useDesignPickerFilters } from './hooks/use-design-picker-filters';
 export { useThemeDesignsQuery } from './hooks/use-theme-designs-query';
