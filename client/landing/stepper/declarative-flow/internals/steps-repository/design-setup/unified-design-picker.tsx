@@ -20,7 +20,6 @@ import {
 	useCategorization,
 	getDesignPreviewUrl,
 	isAssemblerDesign,
-	isAssemblerSupported,
 	PERSONAL_THEME,
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
@@ -45,7 +44,6 @@ import {
 } from 'calypso/components/theme-tier/constants';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { ThemeUpgradeModal as UpgradeModal } from 'calypso/components/theme-upgrade-modal';
-import { useIsSiteAssemblerEnabled } from 'calypso/data/site-assembler';
 import { ActiveTheme, useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -141,8 +139,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const siteDescription = site?.description;
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 	const { data: siteActiveTheme } = useActiveThemeQuery( site?.ID ?? 0, !! site?.ID );
-
-	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabled();
 
 	const isDesignFirstFlow =
 		flow === DESIGN_FIRST_FLOW || queryParams.get( 'flowToReturnTo' ) === DESIGN_FIRST_FLOW;
@@ -687,40 +683,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		exitFlow?.( `/theme/${ theme }/${ siteSlug }` );
 	}
 
-	function designYourOwn( design: Design ) {
-		const shouldGoToAssembler = isAssemblerSupported();
-		if ( shouldGoToAssembler ) {
-			const _selectedDesign = {
-				...design,
-				design_type: 'assembler',
-			} as Design;
-
-			recordPreviewedDesign( {
-				flow,
-				intent,
-				design: _selectedDesign,
-			} );
-
-			setSelectedDesign( _selectedDesign );
-
-			handleSubmit( {
-				selectedDesign: _selectedDesign,
-				selectedSiteCategory: categorization.selections?.join( ',' ),
-				shouldGoToAssembler,
-			} );
-		} else {
-			pickDesign( design );
-		}
-	}
-
-	function clickDesignYourOwnTopButton( design: Design ) {
-		recordTracksEvent(
-			'calypso_signup_design_picker_design_your_own_top_button_click',
-			getDesignEventProps( { flow, intent, design } )
-		);
-		designYourOwn( design );
-	}
-
 	function handleSubmit( providedDependencies?: ProvidedDependencies, optionalProps?: object ) {
 		const _selectedDesign = providedDependencies?.selectedDesign as Design;
 		if ( ! isAssemblerDesign( _selectedDesign ) ) {
@@ -946,8 +908,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		<UnifiedDesignPicker
 			designs={ designs }
 			locale={ locale }
-			onDesignYourOwn={ designYourOwn }
-			onClickDesignYourOwnTopButton={ clickDesignYourOwnTopButton }
 			onPreview={ previewDesign }
 			onChangeVariation={ onChangeVariation }
 			onViewAllDesigns={ trackAllDesignsView }
@@ -957,7 +917,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 			getBadge={ getBadge }
 			oldHighResImageLoading={ oldHighResImageLoading }
-			isSiteAssemblerEnabled={ isSiteAssemblerEnabled }
 			siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
 			showActiveThemeBadge={ intent !== 'build' }
 			isTierFilterEnabled={ isGoalCentricFeature }
