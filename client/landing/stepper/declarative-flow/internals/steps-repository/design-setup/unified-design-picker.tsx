@@ -926,47 +926,43 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		categorization.selections = [ 'blog' ];
 	}
 
-	const stepContent = (
-		<UnifiedDesignPicker
-			designs={ designs }
-			locale={ locale }
-			onPreview={ previewDesign }
-			onChangeVariation={ onChangeVariation }
-			onViewAllDesigns={ trackAllDesignsView }
-			heading={ heading }
-			categorization={ categorization }
-			isPremiumThemeAvailable={ isPremiumThemeAvailable }
-			shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
-			getBadge={ getBadge }
-			oldHighResImageLoading={ oldHighResImageLoading }
-			siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
-			showActiveThemeBadge={ intent !== 'build' }
-			isTierFilterEnabled={ isGoalCentricFeature }
-			isMultiFilterEnabled={ isGoalCentricFeature }
-			onChangeTier={ handleChangeTier }
-		/>
-	);
+	function onDesignWithAI() {
+		recordTracksEvent( 'calypso_design_picker_big_sky_button_click', commonFilterProperties );
+		navigate( `/setup/site-setup/launch-big-sky?siteSlug=${ siteSlug }&siteId=${ site?.ID }` );
+	}
 
-	const bigSkyButtons = (
+	const bigSkyButton = isBigSkyEligible && (
 		<>
-			{ isBigSkyEligible && (
-				<Button
-					onClick={ () => {
-						navigate(
-							`/setup/site-setup/launch-big-sky?siteSlug=${ siteSlug }&siteId=${ site.ID }`
-						);
-						recordTracksEvent(
-							'calypso_design_picker_big_sky_button_click',
-							commonFilterProperties
-						);
-					} }
-				>
-					{ translate( 'Create yours with AI' ) }
-				</Button>
-			) }
+			<Button onClick={ onDesignWithAI }>{ translate( 'Design with AI' ) }</Button>
 			<TrackComponentView
 				eventName="calypso_design_picker_big_sky_button_impression"
 				eventProperties={ commonFilterProperties }
+			/>
+		</>
+	);
+
+	const stepContent = (
+		<>
+			<div className="setup-container__big-sky-container">{ bigSkyButton }</div>
+			<UnifiedDesignPicker
+				designs={ designs }
+				locale={ locale }
+				onDesignWithAI={ onDesignWithAI }
+				onPreview={ previewDesign }
+				onChangeVariation={ onChangeVariation }
+				onViewAllDesigns={ trackAllDesignsView }
+				heading={ heading }
+				categorization={ categorization }
+				isPremiumThemeAvailable={ isPremiumThemeAvailable }
+				shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
+				getBadge={ getBadge }
+				oldHighResImageLoading={ oldHighResImageLoading }
+				siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
+				showActiveThemeBadge={ intent !== 'build' }
+				isTierFilterEnabled={ isGoalCentricFeature }
+				isMultiFilterEnabled={ isGoalCentricFeature }
+				onChangeTier={ handleChangeTier }
+				isBigSkyEligible={ isBigSkyEligible }
 			/>
 		</>
 	);
@@ -979,7 +975,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			hideFormattedHeader
 			hideSkip
 			backLabelText={ translate( 'Back' ) }
-			customizedActionButtons={ bigSkyButtons }
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }
 			goNext={ handleSubmit }
