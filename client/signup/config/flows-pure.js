@@ -467,8 +467,9 @@ export function generateFlows( {
 			destination: getDIFMSiteContentCollectionDestination,
 			description: 'A flow to collect DIFM lite site content',
 			excludeFromManageSiteFlows: true,
-			providesDependenciesInQuery: [ 'siteSlug' ],
-			lastModified: '2024-06-14',
+			providesDependenciesInQuery: [ 'siteId', 'siteSlug' ],
+			optionalDependenciesInQuery: [ 'siteId', 'siteSlug' ],
+			lastModified: '2025-02-27',
 			hideProgressIndicator: true,
 		},
 		{
