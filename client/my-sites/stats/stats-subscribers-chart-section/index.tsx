@@ -266,7 +266,7 @@ export default function SubscribersChartSection( {
 							chartData={ lineChartData }
 							height={ 300 }
 							EmptyState={ () => null }
-							zeroBaseline={ false }
+							zeroBaseline={ lineChartData.length > 1 }
 							formatTimeTick={ formatTimeTick }
 						/>
 					) : (
