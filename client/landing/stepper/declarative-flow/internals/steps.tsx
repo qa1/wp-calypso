@@ -38,6 +38,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/difm-starting-point' ),
 	},
 
+	DOMAIN_CONTACT_INFO: {
+		slug: 'domain-contact-info',
+		asyncComponent: () => import( './steps-repository/domain-contact-info' ),
+	},
+
 	DOMAIN_TRANSFER_INTRO: {
 		slug: 'intro',
 		asyncComponent: () => import( './steps-repository/domain-transfer-intro' ),
