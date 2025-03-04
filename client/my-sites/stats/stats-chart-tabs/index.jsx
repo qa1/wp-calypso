@@ -216,7 +216,7 @@ class StatModuleChartTabs extends Component {
 
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
 
-				{ chartType === 'bar' ? (
+				{ chartType === 'bar' || chartData.length === 0 ? (
 					<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 35 }>
 						<StatsEmptyState
 							headingText={
@@ -238,6 +238,9 @@ class StatModuleChartTabs extends Component {
 						moment={ moment }
 						onClick={ this.props.barClick }
 						formatTimeTick={ this.formatLineChartTimeTick }
+						placeholder={
+							<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
+						}
 					/>
 				) }
 
