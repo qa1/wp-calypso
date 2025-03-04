@@ -282,6 +282,7 @@ export default function SubscribersChartSection( {
 							EmptyState={ () => null }
 							zeroBaseline={ lineChartData.length > 1 }
 							formatTimeTick={ formatTimeTick }
+							placeholder={ <StatsModulePlaceholder className="is-chart" isLoading /> }
 						/>
 					) : (
 						<UplotChart
