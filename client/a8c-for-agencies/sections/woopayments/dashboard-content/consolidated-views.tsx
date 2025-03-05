@@ -3,47 +3,39 @@ import {
 	ConsolidatedStatsCard,
 	ConsolidatedStatsGroup,
 } from 'calypso/a8c-for-agencies/components/consolidated-stats-card';
-import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
-import useGetConsolidatedPayoutData from '../hooks/use-get-consolidated-payout-data';
-import useGetPayoutData from '../hooks/use-get-payout-data';
-import type { Referral } from '../types';
+import useGetPayoutData from '../../referrals/hooks/use-get-payout-data';
+import { useWooPaymentsContext } from '../context';
 
-type ConsolidatedViewsProps = {
-	referrals: Referral[];
-	totalPayouts?: number;
-};
-
-export default function ConsolidatedViews( { referrals, totalPayouts }: ConsolidatedViewsProps ) {
+const WooPaymentsConsolidatedViews = () => {
 	const translate = useTranslate();
-	const { data: productsData, isFetching } = useProductsQuery( false, false, true );
-	const { expectedCommission, pendingOrders } = useGetConsolidatedPayoutData(
-		referrals,
-		productsData
-	);
+
+	const { woopaymentsData, isLoadingWooPaymentsData } = useWooPaymentsContext();
+	const totalCommission = woopaymentsData?.total?.payout ?? 0;
+	const expectedCommission = woopaymentsData?.estimated?.payout ?? 0;
+
 	const { nextPayoutActivityWindow, nextPayoutDate } = useGetPayoutData();
 
 	const learnMoreLink =
-		'https://agencieshelp.automattic.com/knowledge-base/automattic-for-agencies-earnings/';
+		'https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/';
 
 	return (
 		<ConsolidatedStatsGroup className="consolidated-view">
-			{ totalPayouts !== undefined && (
-				<ConsolidatedStatsCard
-					value={ formatCurrency( totalPayouts, 'USD' ) }
-					footerText={ translate( 'All time referral payouts' ) }
-					popoverTitle={ translate( 'Total payouts' ) }
-					popoverContent={ translate(
-						'The exact amount your agency has been paid out for referrals.' +
-							'{{br/}}{{br/}}{{a}}Learn more{{/a}} ↗',
-						{
-							components: {
-								a: <a href={ learnMoreLink } target="_blank" rel="noreferrer noopener" />,
-								br: <br />,
-							},
-						}
-					) }
-				/>
-			) }
+			<ConsolidatedStatsCard
+				value={ formatCurrency( totalCommission, 'USD' ) }
+				footerText={ translate( 'Total WooPayments commissions paid' ) }
+				popoverTitle={ translate( 'Total WooPayments commissions paid' ) }
+				popoverContent={ translate(
+					'The total amount of transactions processed through WooPayments across all your client sites. ' +
+						'{{br/}}{{br/}}{{a}}Learn more{{/a}} ↗',
+					{
+						components: {
+							a: <a href={ learnMoreLink } target="_blank" rel="noreferrer noopener" />,
+							br: <br />,
+						},
+					}
+				) }
+				isLoading={ isLoadingWooPaymentsData }
+			/>
 			<ConsolidatedStatsCard
 				value={ formatCurrency( expectedCommission, 'USD' ) }
 				footerText={ translate( 'Next estimated payout amount' ) }
@@ -65,7 +57,7 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 						},
 					}
 				) }
-				isLoading={ isFetching }
+				isLoading={ isLoadingWooPaymentsData }
 			/>
 			<ConsolidatedStatsCard
 				value={ nextPayoutDate + '*' }
@@ -83,22 +75,8 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 					}
 				) }
 			/>
-			<ConsolidatedStatsCard
-				value={ pendingOrders }
-				footerText={ translate( 'Pending referral orders' ) }
-				popoverTitle={ translate( 'Pending orders' ) }
-				popoverContent={ translate(
-					'These are the number of pending referrals (unpaid carts). ' +
-						'{{br/}}{{br/}}{{a}}Learn more{{/a}} ↗',
-					{
-						components: {
-							a: <a href={ learnMoreLink } target="_blank" rel="noreferrer noopener" />,
-							br: <br />,
-						},
-					}
-				) }
-				isLoading={ isFetching }
-			/>
 		</ConsolidatedStatsGroup>
 	);
-}
+};
+
+export default WooPaymentsConsolidatedViews;
