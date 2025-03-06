@@ -432,8 +432,8 @@ export function generateFlows( {
 			get helpCenterButtonLink() {
 				return translate( 'Contact our site building team' );
 			},
-			providesDependenciesInQuery: [ 'coupon', 'back_to', 'newOrExistingSiteChoice' ],
-			optionalDependenciesInQuery: [ 'coupon', 'back_to', 'newOrExistingSiteChoice' ],
+			providesDependenciesInQuery: [ 'coupon', 'back_to' ],
+			optionalDependenciesInQuery: [ 'coupon', 'back_to' ],
 		},
 		{
 			name: DIFM_FLOW_STORE,
@@ -469,7 +469,7 @@ export function generateFlows( {
 			description: 'A flow for DIFM onboarding',
 			excludeFromManageSiteFlows: true,
 			providesDependenciesInQuery: [ 'siteSlug', 'back_to' ],
-			optionalDependenciesInQuery: [ 'back_to' ],
+			optionalDependenciesInQuery: [ 'siteSlug', 'back_to' ],
 			lastModified: '2025-03-04',
 			enabledHelpCenterGeos: [ 'US' ],
 			get helpCenterButtonCopy() {
