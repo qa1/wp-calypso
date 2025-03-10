@@ -333,6 +333,7 @@ import {
 	FEATURE_STATS_BASIC_20250206,
 	FEATURE_STATS_ADVANCED_20250206,
 	FEATURE_SUPPORT,
+	FEATURE_SUPPORT_FROM_EXPERTS,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -2295,8 +2296,17 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_DONATIONS_AND_TIPS_JP ]: {
 		getSlug: () => FEATURE_DONATIONS_AND_TIPS_JP,
 		getTitle: () => i18n.translate( 'Donations and tips' ),
+		/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
 		getDescription: () =>
-			i18n.translate( 'Allow your audience to support your work easily with donations and tips.' ),
+			i18n.fixMe( {
+				text: 'Allow your audience to support your work easily with charitable donations and tips.',
+				newCopy: i18n.translate(
+					'Allow your audience to support your work easily with charitable donations and tips.'
+				),
+				oldCopy: i18n.translate(
+					'Allow your audience to support your work easily with donations and tips.'
+				),
+			} ),
 	},
 	[ FEATURE_PAYPAL_JP ]: {
 		getSlug: () => FEATURE_PAYPAL_JP,
@@ -2439,6 +2449,23 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_SUPPORT ]: {
 		getSlug: () => FEATURE_SUPPORT,
 		getTitle: () => i18n.translate( 'Support' ),
+	},
+	[ FEATURE_SUPPORT_FROM_EXPERTS ]: {
+		getSlug: () => FEATURE_SUPPORT_FROM_EXPERTS,
+		getTitle: () =>
+			/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
+			i18n.fixMe( {
+				text: 'Support from our expert\u00A0team',
+				newCopy: i18n.translate( 'Support from our expert\u00A0team' ),
+				oldCopy: i18n.translate( 'Fast support from our expert\u00A0team' ),
+			} ),
+		/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
+		getDescription: () =>
+			i18n.fixMe( {
+				text: 'Get support from our expert, friendly Happiness team',
+				newCopy: i18n.translate( 'Get support from our expert, friendly Happiness team' ),
+				oldCopy: i18n.translate( 'Prompt support from our expert, friendly Happiness team' ),
+			} ),
 	},
 	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
 		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,
