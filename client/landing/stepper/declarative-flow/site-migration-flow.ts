@@ -611,6 +611,15 @@ const siteMigration: Flow = {
 						return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/import/${ siteSlug }` ) );
 					}
 
+					if ( entryPoint === 'wp-admin' ) {
+						if ( null !== siteAdminUrl ) {
+							window.location.replace( `${ siteAdminUrl }import.php` );
+							return;
+						}
+						// Unexpected behavior probably caused by the user tinkering with the URL. Redirect to /start.
+						return exitFlow( '/start' );
+					}
+
 					return navigate(
 						addQueryArgs( { siteSlug, siteId }, STEPS.SITE_MIGRATION_IDENTIFY.slug )
 					);
