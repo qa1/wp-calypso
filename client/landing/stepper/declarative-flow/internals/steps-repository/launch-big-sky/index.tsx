@@ -19,13 +19,14 @@ import './styles.scss';
 
 const SiteIntent = Onboard.SiteIntent;
 
-const LaunchBigSky: Step = function () {
+const LaunchBigSky: Step = function ( props ) {
+	const { flow } = props;
 	const { __ } = useI18n();
 	const [ isError, setError ] = useState( false );
 	const [ progress, setProgress ] = useState( 0 );
 	const { siteSlug, siteId, site } = useSiteData();
 	const translate = useTranslate();
-	const { isEligible, isLoading } = useIsBigSkyEligible();
+	const { isEligible, isLoading } = useIsBigSkyEligible( flow );
 	const { setDesignOnSite, setStaticHomepageOnSite, setGoalsOnSite, setIntentOnSite } =
 		useDispatch( SITE_STORE );
 	const goals = useSelect(
@@ -104,7 +105,7 @@ const LaunchBigSky: Step = function () {
 				setProgress( 75 );
 
 				window.location.replace(
-					`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=design-choices`
+					`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ flow }`
 				);
 			} catch ( error ) {
 				// eslint-disable-next-line no-console
