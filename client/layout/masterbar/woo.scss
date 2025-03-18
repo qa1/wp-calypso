@@ -1001,7 +1001,7 @@ $breakpoint-mobile: 660px;
 		&.feature-flag-woocommerce-core-profiler-passwordless-auth {
 			.login form,
 			.signup-form {
-				max-width: 327px;
+				max-width: 515px;
 				margin: 48px auto;
 			}
 		}
@@ -1090,15 +1090,6 @@ $breakpoint-mobile: 660px;
 				p strong {
 					color: $gray-700;
 					font-weight: 400;
-				}
-
-				p:nth-child(2) {
-					@media screen and (min-width: 660px) {
-						// css to allow for this element to exceed parent's width
-						width: 152%; // 152% * 405px gets us to 615px which is the design spec
-						position: relative;
-						left: -26%; // shift position back by half of that so that it remains centered
-					}
 				}
 			}
 
@@ -1894,6 +1885,9 @@ $breakpoint-mobile: 660px;
 				.security-key-form__add-wait-for-key {
 					margin-bottom: 48px;
 
+					p {
+						max-width: 515px;
+					}
 					p:first-child {
 						margin-bottom: 12px;
 					}
@@ -1911,7 +1905,7 @@ $breakpoint-mobile: 660px;
 			}
 
 			.two-factor-authentication__small-print {
-				max-width: $max-width;
+				max-width: 350px;
 				color: $gray-50;
 				text-align: center;
 				font-style: normal;
