@@ -70,7 +70,6 @@ import ComparisonGridToggle from './components/comparison-grid-toggle';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import PlansPageSubheader from './components/plans-page-subheader';
-import useLongerPlanTermDefaultExperiment from './hooks/experiments/use-longer-plan-term-default-experiment';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useDefaultWpcomPlansIntent from './hooks/use-default-wpcom-plans-intent';
 import useEligibilityForTermSavingsPriceDisplay from './hooks/use-eligibility-for-term-savings-price-display';
@@ -248,8 +247,6 @@ const PlansFeaturesMain = ( {
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
 	const getPlanTypeDestination = usePlanTypeDestinationCallback();
 
-	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment( flowName );
-
 	const { createWithBigSky } = useSelect(
 		( select ) => ( {
 			createWithBigSky: ( select( ONBOARD_STORE ) as OnboardSelect ).getCreateWithBigSky(),
@@ -410,8 +407,10 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 	};
 
-	const enableTermSavingsPriceDisplay = useEligibilityForTermSavingsPriceDisplay( {
-		flowName: flowName,
+	const {
+		isEligibleForTermSavingsPriceDisplay: enableTermSavingsPriceDisplay,
+		isLoading: isLoadingemphasizeLongerTermSavingsExperiment,
+	} = useEligibilityForTermSavingsPriceDisplay( {
 		selectedPlan,
 		hiddenPlans,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
@@ -420,7 +419,6 @@ const PlansFeaturesMain = ( {
 		displayedIntervals: filteredDisplayedIntervals,
 		coupon,
 		siteId,
-		isInSignup,
 	} );
 
 	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
@@ -675,7 +673,7 @@ const PlansFeaturesMain = ( {
 			! defaultWpcomPlansIntent || // this may be unnecessary, but just in case
 			! gridPlansForFeaturesGrid ||
 			! gridPlansForComparisonGrid ||
-			longerPlanTermDefaultExperiment.isLoadingExperiment
+			isLoadingemphasizeLongerTermSavingsExperiment
 	);
 
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
