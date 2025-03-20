@@ -98,7 +98,7 @@ const siteMigration: Flow = {
 		return { state: AssertConditionState.SUCCESS };
 	},
 
-	useStepNavigation( currentStep, _navigate ) {
+	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
 		const { siteId } = useSiteData();
 		const variantSlug = this.variantSlug;
@@ -119,10 +119,6 @@ const siteMigration: Flow = {
 
 		const exitFlow = ( to: string ) => {
 			return window.location.assign( addQueryArgs( { sessionId }, to ) );
-		};
-
-		const navigate = ( to: string, state?: Parameters< typeof _navigate >[ 1 ] ) => {
-			return _navigate( addQueryArgs( { sessionId }, to ), state );
 		};
 
 		// Call triggerGuidesForStep for the current step
