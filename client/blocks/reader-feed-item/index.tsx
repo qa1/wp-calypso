@@ -13,7 +13,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import {
 	SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST,
-	useRecordSearchSiteSubscribed,
+	useRecordSiteSubscribed,
+	useRecordSiteUnsubscribed,
 	useRecordSiteIconClicked,
 	useRecordSiteTitleClicked,
 	useRecordSiteUrlClicked,
@@ -58,7 +59,8 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	const recordSiteIconClicked = useRecordSiteIconClicked();
 	const recordSiteTitleClicked = useRecordSiteTitleClicked();
 	const recordSiteUrlClicked = useRecordSiteUrlClicked();
-	const recordSearchSiteSubscribed = useRecordSearchSiteSubscribed();
+	const recordSiteSubscribed = useRecordSiteSubscribed();
+	const recordSiteUnsubscribed = useRecordSiteUnsubscribed();
 
 	// Fetch feed and site data.
 	const queryFeed: boolean = ! isWpcomFeed; // No need to query feed data for WPCOM feeds.
@@ -118,6 +120,8 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 								noticeOptions
 							)
 						);
+
+						recordSiteUnsubscribed( { blog_id: blogId, url: subscribeUrl, source } );
 						refetchFeed();
 
 						if ( shouldTrackRecommendedSearch ) {
@@ -152,7 +156,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 						)
 					);
 
-					recordSearchSiteSubscribed( { blog_id: blogId, url: subscribeUrl, source } );
+					recordSiteSubscribed( { blog_id: blogId, url: subscribeUrl, source } );
 
 					if ( railcar ) {
 						// reader: action: site_followed, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang, rec_blog_id, (incorrect: only railcar & action accepted)
