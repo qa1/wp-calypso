@@ -1794,6 +1794,7 @@ __metadata:
     "@storybook/cli": "npm:^7.6.20"
     "@storybook/react": "npm:^7.6.20"
     "@wordpress/base-styles": "npm:^5.20.0"
+    "@wordpress/commands": "npm:^1.20.0"
     "@wordpress/components": "npm:^29.6.0"
     "@wordpress/compose": "npm:^7.20.0"
     "@wordpress/core-data": "npm:^7.20.0"
