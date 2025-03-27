@@ -20,6 +20,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
+import { StepContainerV2Loading } from 'calypso/components/step-container-v2-loading';
 import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -33,6 +34,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
+import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './styles.scss';
@@ -224,27 +226,26 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	const getCurrentMessage = () => {
-		return __( 'Creating your site' );
-	};
+	const title = __( 'Creating your site' );
 
-	const getSubTitle = () => {
-		return null;
-	};
-
-	const subTitle = getSubTitle();
+	if ( shouldUseStepContainerV2( flow ) ) {
+		return (
+			<>
+				<DocumentHead title={ title } />
+				<StepContainerV2Loading title={ title } progress={ progress } />
+			</>
+		);
+	}
 
 	return (
 		<>
-			<DocumentHead title={ getCurrentMessage() } />
+			<DocumentHead title={ title } />
 			<StepContainer
 				shouldHideNavButtons
 				hideFormattedHeader
 				stepName="create-site"
 				recordTracksEvent={ recordTracksEvent }
-				stepContent={
-					<Loading title={ getCurrentMessage() } subtitle={ subTitle } progress={ progress } />
-				}
+				stepContent={ <Loading title={ title } progress={ progress } /> }
 				showFooterWooCommercePowered={ false }
 			/>
 		</>
